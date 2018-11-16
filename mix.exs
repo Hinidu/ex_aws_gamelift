@@ -8,7 +8,7 @@ defmodule ExAws.Gamelift.MixProject do
 
   def project do
     [
-      app: :ex_aws_dynamo,
+      app: :ex_aws_gamelift,
       version: @version,
       elixir: "~> 1.5",
       elixirc_paths: elixirc_paths(Mix.env()),
