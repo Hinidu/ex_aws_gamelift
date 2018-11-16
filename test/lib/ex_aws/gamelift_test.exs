@@ -10,6 +10,7 @@ defmodule ExAws.GameLiftTest do
       "PlayerIds" => ["player-1", "player-2"],
       "TicketId" => "ticket-1"
     }
+
     assert GameLift.accept_match("ticket-1", ["player-1", "player-2"]).data == expected
   end
 
@@ -19,6 +20,7 @@ defmodule ExAws.GameLiftTest do
       "PlayerIds" => ["player-1"],
       "TicketId" => "ticket-1"
     }
+
     assert GameLift.accept_match("ticket-1", ["player-1"], :reject).data == expected
   end
 
@@ -30,16 +32,17 @@ defmodule ExAws.GameLiftTest do
           :rating => 42,
           "game_mode" => "deathmatch",
           "stats" => %{:win_rate => 0.8, "win_count" => 88},
-          :levels => ["Q3DM0", "Q3DM19"],
+          :levels => ["Q3DM0", "Q3DM19"]
         },
         team: :blue,
-        latency_in_ms: %{"us-west-1" => 42, "us-west-2" => 88},
+        latency_in_ms: %{"us-west-1" => 42, "us-west-2" => 88}
       },
       %Player{
-        team: "red",
+        team: "red"
       },
-      %Player{},
+      %Player{}
     ]
+
     expected = %{
       "ConfigurationName" => "sample",
       "Players" => [
@@ -52,23 +55,24 @@ defmodule ExAws.GameLiftTest do
             "stats" => %{"SDM" => %{"win_rate" => 0.8, "win_count" => 88}}
           },
           "LatencyInMs" => %{"us-west-1" => 42, "us-west-2" => 88},
-          "Team" => "blue",
+          "Team" => "blue"
         },
         %{
           "Team" => "red",
           "LatencyInMs" => nil,
           "PlayerId" => nil,
-          "PlayerAttributes" => nil,
+          "PlayerAttributes" => nil
         },
         %{
           "Team" => nil,
           "LatencyInMs" => nil,
           "PlayerId" => nil,
-          "PlayerAttributes" => nil,
-        },
+          "PlayerAttributes" => nil
+        }
       ],
       "TicketId" => "ticket-1"
     }
+
     assert GameLift.start_matchmaking("sample", players, "ticket-1").data == expected
   end
 
@@ -95,16 +99,18 @@ defmodule ExAws.GameLiftTest do
       "GameSessionId" => "game-session-1",
       "Limit" => 1,
       "NextToken" => "token-1",
-      "StatusFilter" => "ACTIVE",
+      "StatusFilter" => "ACTIVE"
     }
+
     opts = [
       alias_id: "alias-1",
       fleet_id: "fleet-1",
       game_session_id: "game-session-1",
       limit: 1,
       next_token: "token-1",
-      status_filter: :active,
+      status_filter: :active
     ]
+
     assert GameLift.describe_game_session_details(opts).data == expected
   end
 end

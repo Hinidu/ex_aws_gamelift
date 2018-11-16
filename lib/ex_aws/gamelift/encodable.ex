@@ -34,16 +34,19 @@ defimpl ExAws.GameLift.Encodable, for: Map do
     %{"SDM" => do_encode(map, options)}
   end
 
-  def do_encode(map, [only: only]) do
+  def do_encode(map, only: only) do
     map
     |> Map.take(only)
     |> do_encode
   end
-  def do_encode(map, [except: except]) do
+
+  def do_encode(map, except: except) do
     :maps.without(except, map)
     |> do_encode
   end
+
   def do_encode(map, _), do: do_encode(map)
+
   def do_encode(map) do
     map
     |> Stream.map(fn {k, v} when is_number(v) -> {to_string(k), v} end)
@@ -57,11 +60,12 @@ defimpl ExAws.GameLift.Encodable, for: Any do
   end
 
   def deriving(module, _struct, options) do
-    extractor = if only = options[:only] do
-      quote(do: Map.take(struct, unquote(only)))
-    else
-      quote(do: :maps.remove(:__struct__, struct))
-    end
+    extractor =
+      if only = options[:only] do
+        quote(do: Map.take(struct, unquote(only)))
+      else
+        quote(do: :maps.remove(:__struct__, struct))
+      end
 
     quote do
       defimpl ExAws.GameLift.Encodable, for: unquote(module) do
