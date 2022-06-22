@@ -5,8 +5,13 @@ defmodule ExAws.GameLift do
   http://docs.aws.amazon.com/LINK_MUST_BE_HERE
   """
 
-  alias ExAws.GameLift.Encodable
-  alias ExAws.GameLift.Player
+  alias ExAws.GameLift.{
+    DesiredPlayerSession,
+    Encodable,
+    GameProperty,
+    Player,
+    PlayerLatency
+  }
 
   import ExAws.Utils, only: [camelize_keys: 1]
 
@@ -30,7 +35,13 @@ defmodule ExAws.GameLift do
   defp camelize_opts(opts) do
     opts
     |> Map.new()
-    |> ExAws.Utils.camelize_keys()
+    |> camelize_keys()
+  end
+
+  defp camelize_struct(struct) do
+    struct
+    |> Map.from_struct()
+    |> camelize_keys()
   end
 
   @spec get_aliases(Map.t()) :: Map.t()
@@ -126,5 +137,53 @@ defmodule ExAws.GameLift do
       |> camelize_keys
 
     request(:describe_game_session_details, data)
+  end
+
+  @type start_game_session_placement_opts :: [
+          desired_player_sessions: [DesiredPlayerSession.t()],
+          game_properties: [GameProperty.t()],
+          game_session_data: String.t(),
+          game_session_name: String.t(),
+          player_latencies: [PlayerLatency.t()]
+        ]
+  @spec start_game_session_placement(
+          game_session_queue_name :: String.t(),
+          maximum_player_session_count :: non_neg_integer,
+          placement_id :: String.t(),
+          opts :: start_game_session_placement_opts
+        ) ::
+          ExAws.Operation.JSON.t()
+  def start_game_session_placement(
+        game_session_queue_name,
+        maximum_player_session_count,
+        placement_id,
+        opts
+      ) do
+    encoded_args = %{
+      "GameSessionQueueName" => game_session_queue_name,
+      "MaximumPlayerSessionCount" => maximum_player_session_count,
+      "PlacementId" => placement_id
+    }
+
+    encoded_opts =
+      opts
+      |> Map.new(fn
+        {:desired_player_sessions, desired_player_sessions} ->
+          {:desired_player_sessions, Enum.map(desired_player_sessions, &camelize_struct/1)}
+
+        {:game_properties, game_properties} ->
+          {:game_properties, Enum.map(game_properties, &camelize_struct/1)}
+
+        {:player_latencies, player_latencies} ->
+          {:player_latencies, Enum.map(player_latencies, &camelize_struct/1)}
+
+        {key, value} ->
+          {key, value}
+      end)
+      |> camelize_keys
+
+    data = Map.merge(encoded_opts, encoded_args)
+
+    request(:start_game_session_placement, data)
   end
 end
