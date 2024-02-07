@@ -119,6 +119,18 @@ defmodule ExAws.GameLift do
     request(:accept_match, data)
   end
 
+  @type describe_fleet_attributes_opts :: [
+          fleet_ids: [String.t()],
+          limit: pos_integer,
+          next_token: String.t()
+        ]
+  @spec describe_fleet_attributes(opts :: describe_fleet_attributes_opts) ::
+          ExAws.Operation.JSON.t()
+  def describe_fleet_attributes(opts \\ []) do
+    data = opts |> Map.new() |> camelize_keys
+    request(:describe_fleet_attributes, data)
+  end
+
   @type describe_game_session_details_opts :: [
           alias_id: String.t(),
           fleet_id: String.t(),

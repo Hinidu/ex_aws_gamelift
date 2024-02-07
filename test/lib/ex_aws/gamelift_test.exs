@@ -113,4 +113,20 @@ defmodule ExAws.GameLiftTest do
 
     assert GameLift.describe_game_session_details(opts).data == expected
   end
+
+  test "#describe fleet attributes" do
+    expected = %{
+      "FleetIds" => ["fleet-1", "fleet-2"],
+      "Limit" => 777,
+      "NextToken" => "token-1"
+    }
+
+    opts = [
+      fleet_ids: ["fleet-1", "fleet-2"],
+      limit: 777,
+      next_token: "token-1"
+    ]
+
+    assert GameLift.describe_fleet_attributes(opts).data == expected
+  end
 end
